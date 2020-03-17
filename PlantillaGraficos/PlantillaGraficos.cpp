@@ -29,6 +29,7 @@ GLuint vertexArrayCuadradoID;
 GLuint bufferCuadradoID;
 
 vector<Vertice> nube;
+Vertice v[360];
 GLuint vertexArrayNubeID;
 GLuint bufferNubeID;
 
@@ -336,32 +337,16 @@ void inicializarCuadrado10() {
 }
 
 void inicializarNube() {
-	Vertice v1 = {
-	vec3(-1.0f,-0.7f,0.0f),
-	vec4(0.15f, 0.60f, 0.01f)
-	};
+	for (double i = 0; i < 360.0; i += 5.0)
+	{
+		int z = (int)i;
+		v[z] = {
+			vec3(0.2 * cos(i * 3.14159 / 180) - 0.4, 0.2 * sin(i * 3.14159 / 180) + 0.7, 0.0f),
+			vec4(1.0f,1.0f,1.0f,1.0f)
+		};
 
-	Vertice v2 = {
-		vec3(-1.0f,-1.0f,0.0f),
-	vec4(0.15f, 0.60f, 0.01f)
-	};
-
-	Vertice v3 = {
-	vec3(1.0f,-1.0f,0.0f),
-	vec4(0.15f, 0.60f, 0.01f)
-	};
-
-
-	Vertice v4 = {
-	vec3(1.0f,-0.7f,0.0f),
-	vec4(0.15f, 0.60f, 0.01f)
-	};
-
-
-	cuadrado.push_back(v1);
-	cuadrado.push_back(v2);
-	cuadrado.push_back(v3);
-	cuadrado.push_back(v4);
+		nube.push_back(v[z]);
+	}
 
 
 }
@@ -431,7 +416,6 @@ int main()
 	}
 
 	const GLubyte* versionGL = glGetString(GL_VERSION);
-	cout << "Version Opengl: " << versionGL;
 	inicializarCuadrado10();
 	inicializarCuadrado();
 	inicializarCuadrado2();
@@ -442,6 +426,8 @@ int main()
 	inicializarCuadrado9();
 	inicializarCuadrado7();
 	inicializarCuadrado8();
+	inicializarNube();
+
 
 
 
@@ -491,6 +477,16 @@ int main()
 	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void*)sizeof(vec3));
 
 
+	//Proceso de inicializar Vertex Array para las nubes
+	glGenVertexArrays(1, &vertexArrayNubeID);
+	glBindVertexArray(vertexArrayNubeID);
+	glGenBuffers(1, &bufferNubeID);
+	glBindBuffer(GL_ARRAY_BUFFER, bufferNubeID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertice) * nube.size(), nube.data(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(posicionID);
+	glEnableVertexAttribArray(colorID);
+	glVertexAttribPointer(posicionID, 3, GL_FLOAT, GL_FALSE, sizeof(Vertice), 0);
+	glVertexAttribPointer(colorID, 4, GL_FLOAT, GL_FALSE, sizeof(Vertice), (void*)sizeof(vec3));
 
 	//Soltar el vertex array y el buffer
 	glBindVertexArray(0);
